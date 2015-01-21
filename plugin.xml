@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resource_file type="PackedScene" subresource_count="4" version="1.0" version_name="Godot Engine v1.0.stable.custom_build">
+	<resource type="GDScript" path="local://0">
+		<string name="script/source"> "tool&#000a;extends Button&#000a;&#000a;func _on_Button_pressed():&#000a;&#0009;var _filedialog = get_child(0)&#000a;&#0009;_filedialog.set_current_path(&quot;&quot;)&#000a;&#0009;_filedialog.set_current_path(&quot;res://&quot;)&#000a;&#0009;_filedialog.show()&#000a;" </string>
+
+	</resource>
+	<resource type="GDScript" path="local://1">
+		<string name="script/source"> "tool&#000a;extends FileDialog&#000a;&#000a;func _ready():&#000a;&#0009;add_filter(&quot;*.json&quot;)&#000a;&#0009;set_mode(MODE_OPEN_FILE)&#000a;&#0009;hide()" </string>
+
+	</resource>
+	<resource type="GDScript" path="local://2">
+		<string name="script/source"> "tool&#000a;&#000a;extends EditorPlugin&#000a;&#000a;var map_path = &quot;&quot;&#000a;&#000a;func createTileset(var data, var cell_size):&#000a;&#0009;var ts = TileSet.new()&#000a;&#0009;var size = cell_size&#000a;&#0009;for t in data:&#000a;&#0009;&#0009;var file_name = t[&quot;image&quot;]&#000a;&#0009;&#0009;var path = map_path.get_base_dir() + &quot;/&quot; + file_name&#000a;&#0009;&#0009;var file = File.new()&#000a;&#0009;&#0009;if (!file.file_exists(path)):&#000a;&#0009;&#0009;&#0009;print(&quot;couldn&apos;t find the tileset: &quot; + path)&#000a;&#0009;&#0009;&#0009;return false&#000a;&#0009;&#0009;var texture = load(path)&#000a;&#0009;&#0009;texture.set_flags(0)&#000a;&#0009;&#0009;var width = texture.get_width()&#000a;&#0009;&#0009;var height = texture.get_height()&#000a;&#0009;&#0009;var count = t[&quot;firstgid&quot;]&#000a;&#0009;&#0009;var tiles = t[&quot;tiles&quot;]&#000a;&#0009;&#0009;for y in range(0, height, cell_size.y):&#000a;&#0009;&#0009;&#0009;for x in range(0, width, cell_size.x):&#000a;&#0009;&#0009;&#0009;&#0009;var xy = Vector2(x, y)&#000a;&#0009;&#0009;&#0009;&#0009;var rect = Rect2(xy, size)&#000a;&#0009;&#0009;&#0009;&#0009;ts.create_tile(count)&#000a;&#0009;&#0009;&#0009;&#0009;ts.tile_set_texture(count, texture)&#000a;&#0009;&#0009;&#0009;&#0009;ts.tile_set_region(count, rect)&#000a;&#0009;&#0009;&#0009;&#0009;var id = str(count-1)&#000a;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;for tile in tiles:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;if tile == id and tiles[tile].has(&quot;objectgroup&quot;):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;for obj in tiles[tile][&quot;objectgroup&quot;][&quot;objects&quot;]:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;if !obj.has(&quot;polyline&quot;) and !obj.has(&quot;polygon&quot;) and !obj.has(&quot;ellipse&quot;):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var w = obj[&quot;width&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var h = obj[&quot;height&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var xx = obj[&quot;x&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var yy = obj[&quot;y&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var rectshape = RectangleShape2D.new()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;rectshape.set_extents(Vector2(w/2, h/2))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape(count, rectshape)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;elif obj.has(&quot;ellipse&quot;):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var w = obj[&quot;width&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var h = obj[&quot;height&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var xx = obj[&quot;x&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var yy = obj[&quot;y&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;if w == h:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var circleshape = CircleShape2D.new()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;circleshape.set_radius(w/2)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape(count, circleshape)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;else:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var capsuleshape = CapsuleShape2D.new()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;capsuleshape.set_radius(w/2)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;capsuleshape.set_height(h/2)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape(count, capsuleshape)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;elif obj.has(&quot;polygon&quot;):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var polygonshape = ConvexPolygonShape2D.new()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var vectorarray = Vector2Array()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var xx = obj[&quot;x&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var yy = obj[&quot;y&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;for point in obj[&quot;polygon&quot;]:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;vectorarray.push_back(Vector2(point[&quot;x&quot;] + xx, point[&quot;y&quot;] + yy))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;polygonshape.set_points(vectorarray)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape(count, polygonshape)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape_offset(count, Vector2(0, 0))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;elif obj.has(&quot;polyline&quot;):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var polygonshape = ConcavePolygonShape2D.new()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var vectorarray = Vector2Array()&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var xx = obj[&quot;x&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;var yy = obj[&quot;y&quot;]&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;for point in obj[&quot;polyline&quot;]:&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;vectorarray.push_back(Vector2(point[&quot;x&quot;] + xx, point[&quot;y&quot;] + yy))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;polygonshape.set_segments(vectorarray)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape(count, polygonshape)&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;ts.tile_set_shape_offset(count, Vector2(0, 0))&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#0009;&#000a;&#0009;&#0009;&#0009;&#0009;count += 1&#000a;&#000a;&#0009;return ts&#000a;&#000a;func _on_Button_pressed():&#000a;&#0009;var root_node = get_tree().get_edited_scene_root()&#000a;&#0009;var json = File.new()&#000a;&#0009;if (json.file_exists(map_path)):&#000a;&#0009;&#0009;json.open(map_path, 1)&#000a;&#0009;else:&#000a;&#0009;&#0009;print(&quot;the map file seems to not exist&quot;)&#000a;&#0009;&#0009;return false&#000a;&#0009;var map_data = {}&#000a;&#0009;var err = map_data.parse_json(json.get_as_text())&#000a;&#0009;if (err!=OK):&#000a;&#0009;&#0009;print(&quot;error parsing json&quot;)&#000a;&#0009;else:&#000a;&#0009;&#0009;print(&quot;success!&quot;)&#000a;&#000a;&#0009;var tilemap_root = Node2D.new()&#000a;&#0009;tilemap_root.set_name(&quot;Tile Map&quot;)&#000a;&#000a;&#0009;var tileset_data = map_data[&quot;tilesets&quot;]&#000a;&#0009;var cell_size = Vector2(map_data[&quot;tilewidth&quot;], map_data[&quot;tileheight&quot;])&#000a;&#0009;var tileset = createTileset(tileset_data, cell_size)&#000a;&#0009;&#000a;&#0009;if(!tileset):&#000a;&#0009;&#0009;print(&quot;Something went wrong while creating the tileset. Make sure all files are at the right path&quot;)&#000a;&#0009;&#0009;return false&#000a;&#0009;&#000a;&#0009;root_node.add_child(tilemap_root)&#000a;&#0009;tilemap_root.set_owner(root_node)&#000a;&#000a;&#0009;var layers = map_data[&quot;layers&quot;]&#000a;&#0009;for l in layers:&#000a;&#0009;&#0009;var layer_map = TileMap.new()&#000a;&#0009;&#0009;tilemap_root.add_child(layer_map)&#000a;&#0009;&#0009;layer_map.set_owner(root_node)&#000a;&#0009;&#0009;layer_map.set_name(l[&quot;name&quot;])&#000a;&#0009;&#0009;layer_map.set_cell_size(cell_size)&#000a;&#0009;&#0009;layer_map.set_tileset(tileset)&#000a;&#0009;&#0009;var i = 0&#000a;&#0009;&#0009;for y in range(0, l[&quot;height&quot;]):&#000a;&#0009;&#0009;&#0009;for x in range(0, l[&quot;width&quot;]):&#000a;&#0009;&#0009;&#0009;&#0009;var gid = l[&quot;data&quot;][i]&#000a;&#0009;&#0009;&#0009;&#0009;if (gid != 0):&#000a;&#0009;&#0009;&#0009;&#0009;&#0009;layer_map.set_cell(x, y, gid)&#000a;&#0009;&#0009;&#0009;&#0009;i += 1&#000a;&#000a;&#000a;func _on_FileDialog_file_selected( path ):&#000a;&#0009;map_path = path&#000a;" </string>
+
+	</resource>
+	<main_resource>
+		<dictionary name="_bundled" shared="false">
+			<string> "names" </string>
+			<string_array  len="47">
+				<string> "WindowDialog" </string>
+				<string> "_import_path" </string>
+				<string> "visibility/visible" </string>
+				<string> "visibility/opacity" </string>
+				<string> "visibility/self_opacity" </string>
+				<string> "shader/use_parent" </string>
+				<string> "margin/left" </string>
+				<string> "margin/top" </string>
+				<string> "margin/right" </string>
+				<string> "margin/bottom" </string>
+				<string> "focus_neighbour/left" </string>
+				<string> "focus_neighbour/top" </string>
+				<string> "focus_neighbour/right" </string>
+				<string> "focus_neighbour/bottom" </string>
+				<string> "focus/ignore_mouse" </string>
+				<string> "focus/stop_mouse" </string>
+				<string> "size_flags/horizontal" </string>
+				<string> "size_flags/vertical" </string>
+				<string> "size_flags/stretch_ratio" </string>
+				<string> "popup/exclusive" </string>
+				<string> "window/title" </string>
+				<string> "__meta__" </string>
+				<string> "CenterContainer" </string>
+				<string> "anchor/right" </string>
+				<string> "anchor/bottom" </string>
+				<string> "use_top_left" </string>
+				<string> "chooseFile" </string>
+				<string> "Button" </string>
+				<string> "anchor/left" </string>
+				<string> "disabled" </string>
+				<string> "toggle_mode" </string>
+				<string> "click_on_press" </string>
+				<string> "text" </string>
+				<string> "icon" </string>
+				<string> "flat" </string>
+				<string> "clip_text" </string>
+				<string> "align" </string>
+				<string> "script/script" </string>
+				<string> "FileDialog" </string>
+				<string> "custom_colors/files_disabled" </string>
+				<string> "import" </string>
+				<string> "anchor/top" </string>
+				<string> "EditorPlugin" </string>
+				<string> "_on_Button_pressed" </string>
+				<string> "pressed" </string>
+				<string> "_on_FileDialog_file_selected" </string>
+				<string> "file_selected" </string>
+			</string_array>
+			<string> "version" </string>
+			<int> 1 </int>
+			<string> "conn_count" </string>
+			<int> 3 </int>
+			<string> "node_count" </string>
+			<int> 6 </int>
+			<string> "variants" </string>
+			<array  len="29" shared="false">
+				<node_path> "" </node_path>
+				<bool> True </bool>
+				<real> 1 </real>
+				<real> 159 </real>
+				<real> 96 </real>
+				<real> 359 </real>
+				<real> 237 </real>
+				<bool> False </bool>
+				<int> 2 </int>
+				<string> "Tiled Importer" </string>
+				<dictionary  shared="false">
+					<string> "__editor_plugin_states__" </string>
+					<dictionary  shared="false">
+						<string> "Script" </string>
+						<dictionary  shared="false">
+							<string> "current" </string>
+							<int> 1 </int>
+							<string> "sources" </string>
+							<array  len="3" shared="false">
+								<node_path> "/root/EditorNode/@Panel3/@VBoxContainer6/@HSplitContainer8/@VSplitContainer9/@VSplitContainer10/@VBoxContainer11/@Panel16/@Control18/@CanvasItemEditor5850/@VSplitContainer5804/@HSplitContainer5805/@Control5806/@Control5807/@Viewport5808/WindowDialog/import/EditorPlugin" </node_path>
+								<node_path> "/root/EditorNode/@Panel3/@VBoxContainer6/@HSplitContainer8/@VSplitContainer9/@VSplitContainer10/@VBoxContainer11/@Panel16/@Control18/@CanvasItemEditor5850/@VSplitContainer5804/@HSplitContainer5805/@Control5806/@Control5807/@Viewport5808/WindowDialog/chooseFile/FileDialog" </node_path>
+								<node_path> "/root/EditorNode/@Panel3/@VBoxContainer6/@HSplitContainer8/@VSplitContainer9/@VSplitContainer10/@VBoxContainer11/@Panel16/@Control18/@CanvasItemEditor5850/@VSplitContainer5804/@HSplitContainer5805/@Control5806/@Control5807/@Viewport5808/WindowDialog/chooseFile" </node_path>
+							</array>
+						</dictionary>
+						<string> "2D" </string>
+						<dictionary  shared="false">
+							<string> "pixel_snap" </string>
+							<bool> True </bool>
+							<string> "zoom" </string>
+							<real> 0.814507 </real>
+							<string> "use_snap" </string>
+							<bool> False </bool>
+							<string> "ofs" </string>
+							<vector2> -342, -259.586 </vector2>
+							<string> "snap" </string>
+							<int> 10 </int>
+						</dictionary>
+						<string> "3D" </string>
+						<dictionary  shared="false">
+							<string> "deflight_rot_y" </string>
+							<real> 0.628319 </real>
+							<string> "zfar" </string>
+							<real> 500 </real>
+							<string> "fov" </string>
+							<real> 45 </real>
+							<string> "viewports" </string>
+							<array  len="4" shared="false">
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+									<string> "listener" </string>
+									<bool> True </bool>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+								</dictionary>
+								<dictionary  shared="false">
+									<string> "distance" </string>
+									<real> 4 </real>
+									<string> "x_rot" </string>
+									<real> 0 </real>
+									<string> "y_rot" </string>
+									<real> 0 </real>
+									<string> "listener" </string>
+									<bool> False </bool>
+									<string> "use_environment" </string>
+									<bool> False </bool>
+									<string> "use_orthogonal" </string>
+									<bool> False </bool>
+									<string> "pos" </string>
+									<vector3> 0, 0, 0 </vector3>
+								</dictionary>
+							</array>
+							<string> "viewport_mode" </string>
+							<int> 1 </int>
+							<string> "default_light" </string>
+							<bool> True </bool>
+							<string> "ambient_light_color" </string>
+							<color> 0.15, 0.15, 0.15, 1 </color>
+							<string> "show_grid" </string>
+							<bool> True </bool>
+							<string> "show_origin" </string>
+							<bool> True </bool>
+							<string> "znear" </string>
+							<real> 0.1 </real>
+							<string> "default_srgb" </string>
+							<bool> False </bool>
+							<string> "deflight_rot_x" </string>
+							<real> 0.942478 </real>
+						</dictionary>
+					</dictionary>
+					<string> "__editor_run_settings__" </string>
+					<dictionary  shared="false">
+						<string> "custom_args" </string>
+						<string> "-l $scene" </string>
+						<string> "run_mode" </string>
+						<int> 0 </int>
+					</dictionary>
+					<string> "__editor_plugin_screen__" </string>
+					<string> "Script" </string>
+				</dictionary>
+				<int> 1 </int>
+				<int> 3 </int>
+				<real> 40 </real>
+				<real> 20 </real>
+				<real> -40 </real>
+				<real> 60 </real>
+				<string> "Choose File" </string>
+				<resource name=""></resource>				<resource  resource_type="Script" path="local://0">  </resource>
+				<real> 181 </real>
+				<real> 43 </real>
+				<real> 530 </real>
+				<real> 551 </real>
+				<color> 0.0784314, 0.0784314, 0.0784314, 1 </color>
+				<string> "Open a File" </string>
+				<resource  resource_type="Script" path="local://1">  </resource>
+				<string> "Import map" </string>
+				<resource  resource_type="Script" path="local://2">  </resource>
+			</array>
+			<string> "nodes" </string>
+			<int_array  len="278"> 				-1, -1, 0, 0, -1, 21, 1, 0, 2, 1, 3, 2, 4, 2, 5, 1, 6, 3, 7, 4, 8, 5, 9, 6, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 19, 1, 20, 9, 21, 10, 0, 0, 0, 22, 22, -1, 17, 1, 0, 2, 1, 3, 2, 4, 2, 5, 1, 23, 11, 24, 11, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 25, 7, 0, 0, 0, 27, 26, -1, 28, 1, 0, 2, 1, 3, 2, 4, 2, 28, 12, 23, 12, 6, 13, 7, 14, 8, 15, 9, 16, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 29, 7, 30, 7, 31, 7, 32, 17, 33, 18, 34, 7, 35, 7, 36, 11, 37, 19, 0, 2, 0, 38, 38, -1, 21, 1, 0, 2, 1, 3, 2, 4, 2, 6, 20, 7, 21, 8, 22, 9, 23, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 39, 24, 19, 1, 20, 25, 37, 26, 0, 0, 0, 27, 40, -1, 29, 1, 0, 2, 1, 3, 2, 4, 2, 28, 12, 41, 11, 23, 12, 24, 11, 6, 13, 7, 16, 8, 15, 9, 14, 10, 0, 11, 0, 12, 0, 13, 0, 14, 7, 15, 1, 16, 8, 17, 8, 18, 2, 29, 7, 30, 7, 31, 7, 32, 27, 33, 18, 34, 7, 35, 7, 36, 11, 0, 4, 0, 42, 42, -1, 2, 1, 0, 37, 28, 0 </int_array>
+			<string> "conns" </string>
+			<int_array  len="18"> 				2, 2, 44, 43, 2, 0, 3, 5, 46, 45, 2, 0, 4, 5, 44, 43, 2, 0 </int_array>
+		</dictionary>
+
+	</main_resource>
+</resource_file>
