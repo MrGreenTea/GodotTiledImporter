@@ -19,7 +19,9 @@ func createTileset(var data, var cell_size):
 		var width = texture.get_width()
 		var height = texture.get_height()
 		var count = t["firstgid"]
-		var tiles = t["tiles"]
+		var tiles
+		if t.has("tiles"):
+			tiles = t["tiles"]
 		for y in range(0, height, cell_size.y):
 			for x in range(0, width, cell_size.x):
 				var xy = Vector2(x, y)
@@ -29,60 +31,61 @@ func createTileset(var data, var cell_size):
 				ts.tile_set_region(count, rect)
 				var id = str(count-1)
 				
-				for tile in tiles:
-					if tile == id and tiles[tile].has("objectgroup"):
-						for obj in tiles[tile]["objectgroup"]["objects"]:
-							if !obj.has("polyline") and !obj.has("polygon") and !obj.has("ellipse"):
-								var w = obj["width"]
-								var h = obj["height"]
-								var xx = obj["x"]
-								var yy = obj["y"]
-								var rectshape = RectangleShape2D.new()
-								rectshape.set_extents(Vector2(w/2, h/2))
-								ts.tile_set_shape(count, rectshape)
-								ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
-							elif obj.has("ellipse"):
-								var w = obj["width"]
-								var h = obj["height"]
-								var xx = obj["x"]
-								var yy = obj["y"]
-								if w == h:
-									var circleshape = CircleShape2D.new()
-									circleshape.set_radius(w/2)
-									ts.tile_set_shape(count, circleshape)
+				if t.has("tiles"):
+					for tile in tiles:
+						if tile == id and tiles[tile].has("objectgroup"):
+							for obj in tiles[tile]["objectgroup"]["objects"]:
+								if !obj.has("polyline") and !obj.has("polygon") and !obj.has("ellipse"):
+									var w = obj["width"]
+									var h = obj["height"]
+									var xx = obj["x"]
+									var yy = obj["y"]
+									var rectshape = RectangleShape2D.new()
+									rectshape.set_extents(Vector2(w/2, h/2))
+									ts.tile_set_shape(count, rectshape)
 									ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
-								else:
-									var capsuleshape = CapsuleShape2D.new()
-									capsuleshape.set_radius(w/2)
-									capsuleshape.set_height(h/2)
-									ts.tile_set_shape(count, capsuleshape)
-									ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
-							elif obj.has("polygon"):
-								var polygonshape = ConvexPolygonShape2D.new()
-								var vectorarray = Vector2Array()
-								
-								var xx = obj["x"]
-								var yy = obj["y"]
-								
-								for point in obj["polygon"]:
-									vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
+								elif obj.has("ellipse"):
+									var w = obj["width"]
+									var h = obj["height"]
+									var xx = obj["x"]
+									var yy = obj["y"]
+									if w == h:
+										var circleshape = CircleShape2D.new()
+										circleshape.set_radius(w/2)
+										ts.tile_set_shape(count, circleshape)
+										ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
+									else:
+										var capsuleshape = CapsuleShape2D.new()
+										capsuleshape.set_radius(w/2)
+										capsuleshape.set_height(h/2)
+										ts.tile_set_shape(count, capsuleshape)
+										ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
+								elif obj.has("polygon"):
+									var polygonshape = ConvexPolygonShape2D.new()
+									var vectorarray = Vector2Array()
 									
-								polygonshape.set_points(vectorarray)
-								ts.tile_set_shape(count, polygonshape)
-								ts.tile_set_shape_offset(count, Vector2(0, 0))
-							elif obj.has("polyline"):
-								var polygonshape = ConcavePolygonShape2D.new()
-								var vectorarray = Vector2Array()
-								
-								var xx = obj["x"]
-								var yy = obj["y"]
-								
-								for point in obj["polyline"]:
-									vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
+									var xx = obj["x"]
+									var yy = obj["y"]
 									
-								polygonshape.set_segments(vectorarray)
-								ts.tile_set_shape(count, polygonshape)
-								ts.tile_set_shape_offset(count, Vector2(0, 0))
+									for point in obj["polygon"]:
+										vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
+										
+									polygonshape.set_points(vectorarray)
+									ts.tile_set_shape(count, polygonshape)
+									ts.tile_set_shape_offset(count, Vector2(0, 0))
+								elif obj.has("polyline"):
+									var polygonshape = ConcavePolygonShape2D.new()
+									var vectorarray = Vector2Array()
+									
+									var xx = obj["x"]
+									var yy = obj["y"]
+									
+									for point in obj["polyline"]:
+										vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
+										
+									polygonshape.set_segments(vectorarray)
+									ts.tile_set_shape(count, polygonshape)
+									ts.tile_set_shape_offset(count, Vector2(0, 0))
 							
 				count += 1
 
