@@ -1,3 +1,7 @@
 *.flags
 .fscache
-icon.png
+*.png
+*.json
+*.tmx
+*.scn
+engine.cfg
