@@ -1,7 +1,5 @@
 *.flags
 .fscache
 *.png
-*.json
-*.tmx
 *.scn
 engine.cfg
