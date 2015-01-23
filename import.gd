@@ -4,6 +4,10 @@ extends EditorPlugin
 
 var map_path = ""
 
+const FLIPPED_HORIZONTALLY_FLAG = 0x80000000
+const FLIPPED_VERTICALLY_FLAG   = 0x40000000
+const FLIPPED_DIAGONALLY_FLAG   = 0x20000000
+
 func createTileset(var data, var cell_size):
 	var ts = TileSet.new()
 	var size = cell_size
@@ -131,9 +135,20 @@ func _on_Button_pressed():
 		var i = 0
 		for y in range(0, l["height"]):
 			for x in range(0, l["width"]):
-				var gid = l["data"][i]
+				#get the gid as a string first, to prevent rounding error
+				var strgid = str(l["data"][i])
+				var gid = int(strgid)
+				
 				if (gid != 0):
-					layer_map.set_cell(x, y, gid)
+					#read the flags from gid
+					var flipped_horizontally = (gid & FLIPPED_HORIZONTALLY_FLAG)
+					var flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG)
+					var flipped_diagonally = (gid & FLIPPED_DIAGONALLY_FLAG)
+					
+					#clear the flags to get the actual tile id
+					gid &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
+					
+					layer_map.set_cell(x, y, gid, flipped_horizontally, flipped_vertically)
 				i += 1
 
 
