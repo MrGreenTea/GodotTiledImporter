@@ -12,7 +12,7 @@ func createTileset(var data, var cell_size):
 	var ts = TileSet.new()
 	var size = cell_size
 	for t in data:
-		var path = t["image"]
+		var path = map_path.get_base_dir() + t["image"]
 		#var file_name = t["image"]
 		#var path = map_path.get_base_dir() + "/" + file_name
 		var file = File.new()
