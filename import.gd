@@ -35,7 +35,7 @@ func createTileset(var data, var cell_size):
 				ts.tile_set_texture(count, texture)
 				ts.tile_set_region(count, rect)
 				var id = str(count-1)
-				
+
 				if t.has("tiles"):
 					for tile in tiles:
 						if tile == id and tiles[tile].has("objectgroup"):
@@ -68,36 +68,39 @@ func createTileset(var data, var cell_size):
 								elif obj.has("polygon"):
 									var polygonshape = ConvexPolygonShape2D.new()
 									var vectorarray = Vector2Array()
-									
+
 									var xx = obj["x"]
 									var yy = obj["y"]
-									
+
 									for point in obj["polygon"]:
 										vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
-										
+
 									polygonshape.set_points(vectorarray)
 									ts.tile_set_shape(count, polygonshape)
 									ts.tile_set_shape_offset(count, Vector2(0, 0))
 								elif obj.has("polyline"):
 									var polygonshape = ConcavePolygonShape2D.new()
 									var vectorarray = Vector2Array()
-									
+
 									var xx = obj["x"]
 									var yy = obj["y"]
-									
+
 									for point in obj["polyline"]:
 										vectorarray.push_back(Vector2(point["x"] + xx, point["y"] + yy))
-										
+
 									polygonshape.set_segments(vectorarray)
 									ts.tile_set_shape(count, polygonshape)
 									ts.tile_set_shape_offset(count, Vector2(0, 0))
-							
+
 				count += 1
 
 	return ts
 
 func _on_Button_pressed():
 	var root_node = get_tree().get_edited_scene_root()
+	if root_node == null:
+		print("No root node found. Please add one before trying to import a tiled map")
+		return
 	var json = File.new()
 	if (json.file_exists(map_path)):
 		json.open(map_path, 1)
@@ -117,11 +120,11 @@ func _on_Button_pressed():
 	var tileset_data = map_data["tilesets"]
 	var cell_size = Vector2(map_data["tilewidth"], map_data["tileheight"])
 	var tileset = createTileset(tileset_data, cell_size)
-	
+
 	if(!tileset):
 		print("Something went wrong while creating the tileset. Make sure all files are at the right path")
 		return false
-	
+
 	root_node.add_child(tilemap_root)
 	tilemap_root.set_owner(root_node)
 
@@ -139,16 +142,16 @@ func _on_Button_pressed():
 				#get the gid as a string first, to prevent rounding error
 				var strgid = str(l["data"][i])
 				var gid = int(strgid)
-				
+
 				if (gid != 0):
 					#read the flags from gid
 					var flipped_horizontally = (gid & FLIPPED_HORIZONTALLY_FLAG)
 					var flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG)
 					var flipped_diagonally = (gid & FLIPPED_DIAGONALLY_FLAG)
-					
+
 					#clear the flags to get the actual tile id
 					gid &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
-					
+
 					layer_map.set_cell(x, y, gid, flipped_horizontally, flipped_vertically)
 				i += 1
 
