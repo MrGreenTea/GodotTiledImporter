@@ -3,10 +3,14 @@ tool
 extends EditorPlugin
 
 var map_path = ""
+var error_popup
 
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000
 const FLIPPED_VERTICALLY_FLAG   = 0x40000000
 const FLIPPED_DIAGONALLY_FLAG   = 0x20000000
+
+func _ready():
+	error_popup = get_node("ErrorPopup")
 
 func createTileset(var data, var cell_size):
 	var ts = TileSet.new()
@@ -18,6 +22,8 @@ func createTileset(var data, var cell_size):
 		var file = File.new()
 		if (!file.file_exists(path)):
 			print("couldn't find the tileset: " + path)
+			error_popup.set_text("couldn't find the tileset: " + path)
+			error_popup.popup()
 			return false
 		var texture = load(path)
 		texture.set_flags(0)
@@ -100,19 +106,24 @@ func _on_Button_pressed():
 	var root_node = get_tree().get_edited_scene_root()
 	if root_node == null:
 		print("No root node found. Please add one before trying to import a tiled map")
+		error_popup.set_text("No root node found. Please add one before trying to import a tiled map")
+		error_popup.popup()
 		return
 	var json = File.new()
 	if (json.file_exists(map_path)):
 		json.open(map_path, 1)
 	else:
-		print("the map file seems to not exist")
+		print("The map file " + map_path +" seems to not exist.")
+		error_popup.set_text("The map file " + map_path +" seems to not exist.")
+		error_popup.popup()
 		return false
 	var map_data = {}
 	var err = map_data.parse_json(json.get_as_text())
 	if (err!=OK):
-		print("error parsing json")
-	else:
-		print("success!")
+		print("Error parsing the map file. Please make sure it's in a valid format. Currently only .json is supported")
+		error_popup.set_text("Error parsing the map file. Please make sure it's in a valid format. Currently only .json is supported")
+		error_popup.popup()
+		return
 
 	var tilemap_root = Node2D.new()
 	tilemap_root.set_name("Tile Map")
@@ -155,6 +166,9 @@ func _on_Button_pressed():
 					layer_map.set_cell(x, y, gid, flipped_horizontally, flipped_vertically)
 				i += 1
 
+	error_popup.set_text("Succesfully imported the map")
+	error_popup.popup()
+	return
 
 func _on_FileDialog_file_selected( path ):
 	map_path = path
