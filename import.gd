@@ -28,7 +28,9 @@ func createTileset(var data, var cell_size):
 		var texture = load(path)
 		texture.set_flags(0)
 		var width = texture.get_width()
+		width -= width % int(cell_size.x)
 		var height = texture.get_height()
+		height -= height % int(cell_size.y)
 		var count = t["firstgid"]
 		var tiles
 		if t.has("tiles"):
