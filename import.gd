@@ -49,7 +49,7 @@ func createTileset(var data, var cell_size):
 				ts.create_tile(count)
 				ts.tile_set_texture(count, texture)
 				ts.tile_set_region(count, rect)
-				var id = str(count-1)
+				var id = str(count - int(t["firstgid"]))
 
 				if t.has("tiles"):
 					for tile in tiles:
