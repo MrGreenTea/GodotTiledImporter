@@ -35,15 +35,8 @@ func createTileset(var data, var cell_size):
 		var tiles
 		if t.has("tiles"):
 			tiles = t["tiles"]
-		var spacing = t["spacing"]
-		var cy = 0
 		for y in range(0, height, cell_size.y):
-			y += cy * spacing
-			cy += 1
-			var cx = 0
 			for x in range(0, width, cell_size.x):
-				x += cx * spacing
-				cx += 1
 				var xy = Vector2(x, y)
 				var rect = Rect2(xy, size)
 				ts.create_tile(count)
