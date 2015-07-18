@@ -4,3 +4,4 @@
 *.scn
 engine.cfg
 *.json
+.DS_Store
