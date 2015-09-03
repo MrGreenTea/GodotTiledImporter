@@ -149,6 +149,9 @@ func _on_Button_pressed():
 		layer_map.set_name(l["name"])
 		layer_map.set_cell_size(cell_size)
 		layer_map.set_tileset(tileset)
+		# Sets the Z property if defined in the layer
+		if (l.has("properties") and l["properties"].has("z-order") and l["properties"]["z-order"].is_valid_integer()):
+			layer_map.set_z(int(l["properties"]["z-order"]))
 		var i = 0
 		for y in range(0, l["height"]):
 			for x in range(0, l["width"]):
