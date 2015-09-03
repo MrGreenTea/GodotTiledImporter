@@ -71,27 +71,35 @@ func createTileset(var data, var cell_size, var onlyused, var layers): # data = 
 			tiles = t["tiles"]
 		for y in range(0, height, cell_size.y):
 			for x in range(0, width, cell_size.x):
-				var intcount = int(count)
-				if ((onlyused == false) || ((onlyused == true) && ( corres_array.find(intcount) != -1))): #when onlyused is true, the tile from Tiled tileset is imported in Godot tileset only if it is used in the map
-					var xy = Vector2(x, y)
-					var rect = Rect2(xy, size)
-					ts.create_tile(count)
-					ts.tile_set_texture(count, texture)
-					ts.tile_set_region(count, rect)
-					var id = str(count - int(t["firstgid"]))
+				var xy = Vector2(x, y)
+				var rect = Rect2(xy, size)
+				ts.create_tile(count)
+				ts.tile_set_texture(count, texture)
+				ts.tile_set_region(count, rect)
+				var id = str(count - int(t["firstgid"]))
 
-					if t.has("tiles"):
-						for tile in tiles:
-							if tile == id and tiles[tile].has("objectgroup"):
-								for obj in tiles[tile]["objectgroup"]["objects"]:
-									if !obj.has("polyline") and !obj.has("polygon") and !obj.has("ellipse"):
-										var w = obj["width"]
-										var h = obj["height"]
-										var xx = obj["x"]
-										var yy = obj["y"]
-										var rectshape = RectangleShape2D.new()
-										rectshape.set_extents(Vector2(w/2, h/2))
-										ts.tile_set_shape(count, rectshape)
+				if t.has("tiles"):
+					for tile in tiles:
+						if tile == id and tiles[tile].has("objectgroup"):
+							for obj in tiles[tile]["objectgroup"]["objects"]:
+								if !obj.has("polyline") and !obj.has("polygon") and !obj.has("ellipse"):
+									var w = obj["width"]
+									var h = obj["height"]
+									var xx = obj["x"]
+									var yy = obj["y"]
+									var rectshape = RectangleShape2D.new()
+									rectshape.set_extents(Vector2(w/2, h/2))
+									ts.tile_set_shape(count, rectshape)
+									ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
+								elif obj.has("ellipse"):
+									var w = obj["width"]
+									var h = obj["height"]
+									var xx = obj["x"]
+									var yy = obj["y"]
+									if w == h:
+										var circleshape = CircleShape2D.new()
+										circleshape.set_radius(w/2)
+										ts.tile_set_shape(count, circleshape)
 										ts.tile_set_shape_offset(count, Vector2(w/2 + xx, h/2 + yy))
 									elif obj.has("ellipse"):
 										var w = obj["width"]
