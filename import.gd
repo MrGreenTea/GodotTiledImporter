@@ -72,7 +72,7 @@ func createTileset(var data, var cell_size, var onlyused, var layers): # data = 
 		for y in range(0, height, cell_size.y):
 			for x in range(0, width, cell_size.x):
 				var intcount = int(count)
-				if ((onlyused == false) || ((onlyused == true) && ( corres_array.find(intcount) != -1))): #when onlyused is true, the tile from Tiled tileset is imported in Godot tileset only if it is used in the map
+				if ( !onlyused || ( onlyused && ( corres_array.find(intcount) != -1))): #when onlyused is true, the tile from Tiled tileset is imported in Godot tileset only if it is used in the map
 					var xy = Vector2(x, y)
 					var rect = Rect2(xy, size)
 					ts.create_tile(count)
