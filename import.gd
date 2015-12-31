@@ -66,11 +66,21 @@ func createTileset(var data, var cell_size, var onlyused, var layers): # data = 
 		var height = texture.get_height()
 		height -= height % int(cell_size.y)
 		var count = t["firstgid"]
+		var spacing
+		if t.has("spacing"):
+			spacing = t["spacing"]
+		else:
+			spacing = 0
+		var margin
+		if t.has("margin"):
+			margin = t["margin"]
+		else:
+			margin = 0
 		var tiles
 		if t.has("tiles"):
 			tiles = t["tiles"]
-		for y in range(0, height, cell_size.y):
-			for x in range(0, width, cell_size.x):
+		for y in range(margin, height, cell_size.y + spacing):
+			for x in range(margin, width, cell_size.x + spacing):
 				var intcount = int(count)
 				if ( !onlyused || ( onlyused && ( corres_array.find(intcount) != -1))): #when onlyused is true, the tile from Tiled tileset is imported in Godot tileset only if it is used in the map
 					var xy = Vector2(x, y)
