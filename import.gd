@@ -16,7 +16,7 @@ func _on_CheckBox_toggled( pressed ): #the checkbox "import only used tiles" is 
 	if (pressed):
 		only_used_tiles = true
 		print (only_used_tiles)
-		
+
 	else:
 		only_used_tiles = false
 		print (only_used_tiles)
@@ -28,7 +28,7 @@ func _ready():
 func createTileset(var data, var cell_size, var onlyused, var layers): # data = tileset_data = map_data[tilesets]
 	var ts = TileSet.new()
 	var size = cell_size
-	
+
 	if (onlyused) : #create a list containing the ids of all the Tiled tilesets tiles which are effectively used in the map
 		for l in layers:
 			var i = 0
@@ -48,7 +48,7 @@ func createTileset(var data, var cell_size, var onlyused, var layers): # data = 
 
 						corres_array.append(gid)
 					i += 1
-	
+
 	for t in data:
 		var path = map_path.get_base_dir() + "/" + t["image"]
 		#var file_name = t["image"]
@@ -188,7 +188,10 @@ func _on_Button_pressed():
 	root_node.add_child(tilemap_root)
 	tilemap_root.set_owner(root_node)
 
-	
+	var mode = TileMap.MODE_SQUARE
+	if map_data["orientation"] == "isometric":
+		mode = TileMap.MODE_ISOMETRIC
+
 	for l in layers:
 		var layer_map = TileMap.new()
 		tilemap_root.add_child(layer_map)
@@ -197,9 +200,17 @@ func _on_Button_pressed():
 		layer_map.set_cell_size(cell_size)
 		layer_map.set_tileset(tileset)
 		layer_map.set_opacity(l["opacity"])
+		layer_map.set_mode(mode)
 		# Sets the Z property if defined in the layer
 		if (l.has("properties") and l["properties"].has("z-order") and l["properties"]["z-order"].is_valid_integer()):
 			layer_map.set_z(int(l["properties"]["z-order"]))
+		# Sets the offsets property if defined in the layer
+		var offset = Vector2(0, 0)
+		if (l.has("offsetx")):
+		  offset.x = int(l["offsetx"])
+		if (l.has("offsety")):
+		  offset.y = int(l["offsety"])
+		layer_map.set_pos(offset)
 		var i = 0
 		for y in range(0, l["height"]):
 			for x in range(0, l["width"]):
@@ -213,7 +224,7 @@ func _on_Button_pressed():
 					var flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG)
 					var flipped_diagonally = (gid & FLIPPED_DIAGONALLY_FLAG)
 
-					#clear the flags to get the actual tile id 
+					#clear the flags to get the actual tile id
 					gid &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
 					layer_map.set_cell(x, y, gid, flipped_horizontally, flipped_vertically)
 				i += 1
