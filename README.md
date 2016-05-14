@@ -5,6 +5,7 @@ Just download as zip and put in godots plugin folder.
 Should look something like this:
 
 <godot-folder>/plugins/GodotTiledImporter
+On Linux it is most probably in ~/.godot/plugins/
 
 On Mac OSX:
 
